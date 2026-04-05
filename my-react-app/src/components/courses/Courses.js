@@ -50,7 +50,7 @@ const sendReview = async (courseId) => {
   try {
     const token = await user.getIdToken(true); // Отримуємо токен для авторизації
 
-    const response = await fetch("https://anastasiiabryiovska-github-io.onrender.com/api/reviews", {
+    const response = await fetch("https://srv-d794k9khg0os73e1s090.onrender.com/api/reviews", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -77,7 +77,7 @@ const sendReview = async (courseId) => {
 
 const getReviews = async (courseId) => {
   try {
-    const response = await fetch(`https://anastasiiabryiovska-github-io.onrender.com/api/reviews/${courseId}`);
+    const response = await fetch(`https://srv-d794k9khg0os73e1s090.onrender.com/api/reviews/${courseId}`);
     const data = await response.json();
 
     setReviews(data);
