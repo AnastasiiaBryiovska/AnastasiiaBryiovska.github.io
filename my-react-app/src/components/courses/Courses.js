@@ -4,6 +4,8 @@ import { db } from "../../firebase";
 import { collection, getDocs, addDoc } from "firebase/firestore";
 import './Courses.css';
 
+const API_URL = "https://anastasiiabryiovska-github-io.onrender.com";
+
 
 
 
@@ -50,7 +52,7 @@ const sendReview = async (courseId) => {
   try {
     const token = await user.getIdToken(true); // Отримуємо токен для авторизації
 
-    const response = await fetch("https://anastasiiabryiovska-github-io.onrender.com/api/reviews", {
+    const response = await fetch(`${API_URL}/api/reviews`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -77,7 +79,7 @@ const sendReview = async (courseId) => {
 
 const getReviews = async (courseId) => {
   try {
-    const response = await fetch(`https://anastasiiabryiovska-github-io.onrender.com/api/reviews/${courseId}`);
+    const response = await fetch(`${API_URL}/api/reviews/${courseId}`);
     const data = await response.json();
 
     setReviews(data);
