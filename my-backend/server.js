@@ -1,10 +1,27 @@
 require("dotenv").config();
 
+
 const express = require("express");
 const cors = require("cors");
 const admin = require("firebase-admin");
+const app = express();
 
 let users = []; 
+
+const corsOptions = {
+  origin: [
+    'http://localhost:3000',
+    'https://anastasiiabryiovska.github.io', // ваш старий домен
+    'https://dreamy-rugelach-8be11b.netlify.app' // ДОДАЙТЕ ЦЕЙ ДОМЕН NETLIFY
+  ],
+  methods: ['GET','POST','PUT','DELETE','OPTIONS'],
+  allowedHeaders: ['Content-Type','Authorization'],
+  credentials: true
+};
+
+app.use(cors(corsOptions)); // Обов'язково першим
+app.use(express.json()); 
+
 
 
 // Firebase Admin init (SAFE VERSION)
@@ -18,13 +35,35 @@ admin.initializeApp({
 
 const db = admin.firestore();
 
-const app = express();
-
-app.use(cors());
-app.use(express.json());
 
 
+app.get("/api/reviews/:courseId", async (req, res) => {
+  const { courseId } = req.params;
 
+  try {
+    const snapshot = await db.collection("response").where("courseId", "==", courseId).get();
+
+    if (snapshot.empty) {
+      console.log("Відгуки не знайдено для courseId:", courseId);
+      return res.status(200).json([]); // повертаємо пустий масив замість 404
+    }
+
+    const reviews = snapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data(),
+      date: doc.data().date?.toDate() || new Date(),
+      dateFormatted: doc.data().date ? 
+        `${doc.data().date.toDate().getDate().toString().padStart(2,'0')}.${(doc.data().date.toDate().getMonth()+1).toString().padStart(2,'0')}.${doc.data().date.toDate().getFullYear()}` 
+        : ""
+    }));
+
+    reviews.sort((a, b) => b.date - a.date);
+    res.json(reviews);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Не вдалося отримати відгуки" });
+  }
+});
 
 
 // Маршрут для отримання відгуків по конкретному курсу
@@ -34,30 +73,28 @@ app.get("/api/reviews/:courseId", async (req, res) => {
   try {
     const snapshot = await db.collection("response").where("courseId", "==", courseId).get();
 
-    let reviews = snapshot.docs.map(doc => {
+    // якщо відгуків немає, повертаємо пустий масив замість 404
+    if (snapshot.empty) return res.json([]);
+
+    const reviews = snapshot.docs.map(doc => {
       const data = doc.data();
       return {
+        id: doc.id,
         ...data,
-        date: data.date ? data.date.toDate() : new Date(), // Якщо є поле date у Firestore
+        date: data.date ? data.date.toDate() : new Date(),
         dateFormatted: data.date ? 
-          `${data.date.toDate().getDate().toString().padStart(2,'0')}.${(data.date.toDate().getMonth()+1).toString().padStart(2,'0')}.${data.date.toDate().getFullYear()}`
+          `${data.date.toDate().getDate().toString().padStart(2,'0')}.${(data.date.toDate().getMonth()+1).toString().padStart(2,'0')}.${data.date.toDate().getFullYear()}` 
           : ""
       };
     });
 
-
-    console.log("Отримані відгуки:", reviews);
-
-    // Сортуємо за датою спадання
-    reviews.sort((a,b) => b.date - a.date);
-
+    reviews.sort((a, b) => b.date - a.date);
     res.json(reviews);
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Не вдалося отримати відгуки" });
   }
 });
-
 
 app.post("/api/reviews", async (req, res) => {
   const { courseId, userId, message } = req.body;
