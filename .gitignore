@@ -1,0 +1,9 @@
+node_modules/
+.env
+lab2/
+lab3/
+lab4/
+
+my-backend/node_modules/
+firebaseConfig.js
+serviceAccountKey.json

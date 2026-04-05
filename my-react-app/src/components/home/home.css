@@ -1,0 +1,28 @@
+.mainHeader{
+    font-size: 60px;
+    color: #333;
+}
+
+.colPhoto {
+  width: 500px;
+  height: auto;
+  padding: 5px;
+  border-radius: 40px;
+  box-shadow: 10px 10px 5px #333;
+}
+
+.colText{
+    font-size: 25px;
+    padding: 100px;
+    font-style: italic;
+    color: #333;
+}
+
+.component {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(250px, 1fr));
+  justify-items: center;
+  gap: 20px;
+}
+
+

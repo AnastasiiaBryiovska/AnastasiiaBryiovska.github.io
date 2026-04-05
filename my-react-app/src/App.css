@@ -1,0 +1,215 @@
+body {
+  background-color: #f3f4ef;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  font-family: Arial, 'Times New Roman';
+}
+
+
+
+.App {
+  text-align: center;
+}
+
+
+.App-logo {
+  height: 40vmin;
+  pointer-events: none;
+}
+
+nav {
+  display: flex;
+  justify-content: flex-start;
+  
+
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .App-logo {
+    animation: App-logo-spin infinite 20s linear;
+  }
+}
+
+.App-header {
+  background-color: #333;
+  min-height: 10vh;
+  display: flex;
+  flex-direction: row; 
+  justify-content: space-between; 
+  align-items: center; 
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+.headerr{
+  text-align: left;
+  margin: 20px 50px;
+}
+
+
+.App-link {
+  color: #61dafb;
+}
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.h2 {
+  color: #333;
+  font-size: 50px ;
+  margin: 40px;
+}
+
+.contain{
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-start;
+  margin-right: 50px;
+
+}
+
+.bigLink {
+  background-color: #333;
+  font-size: 24px;
+  color: #F3EEE4;
+  text-align: right;
+  text-decoration: none;
+  margin: 15px;
+  padding: 20px;
+}
+
+.logOut{
+  margin-left: 150px;
+}
+
+.smallLink {
+  background-color: #333;
+  font-size: 15px;
+  font-weight: bold;
+  color: #F3EEE4;
+  text-align: left;
+  text-decoration: none;
+  margin: 15px;
+  padding: 10px 20px;
+  border-radius:  10px;
+}
+
+
+.schedule {
+  background-color: #F3EEE4;
+  color: #333;
+  padding: 20px;
+  margin: 20px;
+  width: 300px;
+  border-radius: 20px;
+  box-shadow: 10px 10px 5px #333;
+}
+
+.scheduleList {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(250px, 1fr));
+  justify-items: center;
+  gap: 20px;
+}
+
+
+.btn{
+  background-color: #6b9f8f;
+  color: #F2F2EE;
+  margin: 20px;
+  padding: 10px 15px;
+  border-radius: 12px;
+  border: none;
+  text-decoration: none;
+  display: inline-flex;
+  font-weight: 400;
+  gap: 8px;
+  transition: background-color 0.3s, transform 0.2s, box-shadow 0.3s;
+}
+
+
+.btn:hover{
+  background-color: #2C756F;
+  transform: translateY(-4px);
+}
+
+.select {
+  background-color: #6b9f8f;
+  color: #F2F2EE;
+  margin: 20px;
+  padding: 10px 15px;
+  border-radius: 12px;
+  border: none;
+  display: inline-flex;
+  font-weight: 400;
+  gap: 8px;
+}
+
+.register {
+  background-color: #F3EEE4;
+  color: #333;
+  padding: 20px;
+  margin: 20px auto;
+  width: 400px;
+  border-radius: 20px;
+  box-shadow: 10px 10px 5px #333;
+}
+
+.registerInput {
+  width: 100%;
+  padding: 10px;
+  margin: 10px 0;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  box-sizing: border-box; 
+  font-size: 16px;
+}
+
+.btnC{
+  width: 240px;
+}
+
+.btnR{
+  height: 30px;
+  background-color: #6b9f8f;
+  color: #F2F2EE;
+  margin: 20px;
+  padding: 20px;
+  border-radius: 12px;
+  border: none;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center; 
+  height: 60px;
+  width: 150px;
+  font-size: 17px;
+  font-weight: bold;
+  gap: 8px;
+  transition: background-color 0.3s, transform 0.2s, box-shadow 0.3s;
+}
+
+
+.btnCont {
+  display: flex;
+  gap: 10px; /* відстань між кнопками */
+}
+
+.btnR:hover{
+  background-color: #2C756F;
+  transform: translateY(-4px);
+}
+
+
+.notCourse {
+  text-align: center;
+  background-color: #2C756F;
+  color: #F3EEE4;
+  padding: 15px;
+  border-radius: 10px;
+}
