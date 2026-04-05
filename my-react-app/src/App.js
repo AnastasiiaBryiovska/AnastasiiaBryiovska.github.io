@@ -221,7 +221,7 @@ function App() {
 
 
       console.log("ID TOKEN:", token);
-      const response = await fetch("https://srv-d794k9khg0os73e1s090.onrender.com/api/protected", {
+      const response = await fetch("https://anastasiiabryiovska-github-io.onrender.com/api/protected", {
         headers: {
           Authorization: `Bearer ${token}`
         }
@@ -239,7 +239,7 @@ function App() {
   }, [user]);
 
   useEffect(() => {
-    fetch("https://srv-d794k9khg0os73e1s090.onrender.com/api/message")
+    fetch("https://anastasiiabryiovska-github-io.onrender.com/api/message")
       .then(response => response.json())
       .then(data => {
         console.log("Повідомлення від сервера:", data.message);
