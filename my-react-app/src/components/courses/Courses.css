@@ -10,6 +10,7 @@
   transition: 0.3s;
 }
 
+
 .myCourse{
   background-color: #F3EEE4;
   color: #333;
@@ -68,5 +69,22 @@
   margin: 10px auto;
   padding: 10px 20px;
   width: fit-content;
+  border-radius: 10px;
+  font-size: 20px;
+}
+
+.revie{
+  background-color: #bcbbbb;
+  color: #333;
+  margin: 10px auto;
+  padding: 10px 20px;
+  width: fit-content;
+  border-radius: 10px;
+  text-align: right;
+  font-size: 12px;
+}
+
+.textareas{
+  background-color: #e7e7e7;
   border-radius: 10px;
 }

@@ -44,37 +44,46 @@ const Courses = ({ user, setSelectedCourses, selectedCourses  }) => {
   }, []);
 
 
-  const sendReview = async (courseId) => {
+const sendReview = async (courseId) => {
   if (!reviewText) return;
 
   try {
-    await addDoc(collection(db, "response"), {
-      message: reviewText,
-      userId: user.uid,
-      courseId: courseId 
+    const token = await user.getIdToken(true); // Отримуємо токен для авторизації
+
+    const response = await fetch("https://anastasiiabryiovska-github-io.onrender.com/api/reviews", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        courseId: courseId,
+        userId: user.uid,
+        message: reviewText
+      }),
     });
+
+    if (!response.ok) throw new Error("Не вдалося додати відгук");
 
     setReviewText("");
     alert("Відгук збережено!");
+    await getReviews(courseId);
   } catch (error) {
     console.error("Помилка:", error);
+    alert("Помилка при додаванні відгуку");
   }
 };
 
 
 const getReviews = async (courseId) => {
   try {
-    const querySnapshot = await getDocs(collection(db, "response"));
+    const response = await fetch(`https://anastasiiabryiovska-github-io.onrender.com/api/reviews/${courseId}`);
+    const data = await response.json();
 
-    const data = querySnapshot.docs.map(doc => doc.data());
-
-    const filtered = data.filter(r => r.courseId === courseId);
-
-    setReviews(filtered);
+    setReviews(data);
     setOpenReviewsId(courseId);
-
   } catch (error) {
-    console.error(error);
+    console.error("Помилка при отриманні відгуків з сервера:", error);
   }
 };
 
@@ -111,6 +120,15 @@ const getReviews = async (courseId) => {
   setCourseList(arr);
   };
 
+  const toggleReviews = (courseId) => {
+  if (openReviewsId === courseId) {
+    setOpenReviewsId(null);
+    return;
+  }
+
+  getReviews(courseId);
+};
+
   return (
     <div style={{ padding: '20px' }}>
 
@@ -143,7 +161,7 @@ const getReviews = async (courseId) => {
                 <p>Викладач: {course.instructor}</p>
                 <p className='description'>{course.description}</p>
                 {user && (<div className="review"> 
-                  <textarea placeholder="Напишіть ваш відгук..." value={reviewText} onChange={(e) => setReviewText(e.target.value)}/>
+                  <textarea className='textareas' placeholder="Напишіть ваш відгук..." value={reviewText} onChange={(e) => setReviewText(e.target.value)}/>
                   <button className="btn" onClick={() => sendReview(course.id)} >Надіслати відгук</button></div>)}
               </div>
             )}
@@ -155,9 +173,7 @@ const getReviews = async (courseId) => {
                 {openCourseId === course.id ? "Сховати" : "Детальніше"}
             </button>
             
-            <button className='btn' onClick={() => openReviewsId === course.id
-            ? setOpenReviewsId(null)
-            : getReviews(course.id)}>
+            <button className='btn' onClick={() => toggleReviews(course.id)}>
               {openReviewsId === course.id ? "Сховати відгуки" : "Переглянути відгуки"}
             </button>
 
@@ -166,9 +182,7 @@ const getReviews = async (courseId) => {
                 <h4>Відгуки:</h4>
                 {reviews.length === 0 ? (
                   <p>Немає відгуків</p>
-                ) : ( reviews.map((r, index) => (
-                  <p className='messag' key={index}>{r.message}</p>
-                ))
+                ) : ( reviews.map((r, index) => ( <div className='revie' key={index}> <p className='messag'>{r.message}</p><p>{r.dateFormatted}</p> </div>))
               )}
               </div>
             )}

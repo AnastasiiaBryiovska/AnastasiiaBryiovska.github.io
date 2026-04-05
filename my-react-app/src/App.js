@@ -206,32 +206,40 @@ function App() {
   const [user, setUser] = useState(null);
   const [selectedCourses, setSelectedCourses] = useState([]);
 
-  // // Login
-  // // Fetch Protected API Data
-  // async function getProtectedData() {
-  //   const user = auth.currentUser;
-  //   if (!user) {
-  //     alert("Please log in first.");
-  //     return;
-  //   }
 
-  //   try {
-  //     const token = await user.getIdToken();
-  //     const response = await fetch("http://localhost:5000/api/protected", {
-  //       headers: {
-  //         Authorization: `Bearer ${token}`
-  //       }
-  //     });
+  async function getProtectedData() {
 
-  //     const data = await response.json();
-  //     alert(JSON.stringify(data));
-  //   } catch (error) {
-  //     alert("Error fetching protected data: " + error.message);
-  //   }
-  // }
+    const user = auth.currentUser;
+
+    if (!user) {
+      alert("Please log in first.");
+      return;
+    }
+
+    try {
+      const token = await user.getIdToken(true);
+
+
+      console.log("ID TOKEN:", token);
+      const response = await fetch("https://anastasiiabryiovska-github-io.onrender.com/api/protected", {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+
+      const data = await response.json();
+      alert(JSON.stringify(data));
+    } catch (error) {
+      alert("Error fetching protected data: " + error.message);
+    }
+  }
 
   useEffect(() => {
-    fetch("http://localhost:5000/api/message")
+    console.log("USER STATE:", user);
+  }, [user]);
+
+  useEffect(() => {
+    fetch("https://anastasiiabryiovska-github-io.onrender.com/api/message")
       .then(response => response.json())
       .then(data => {
         console.log("Повідомлення від сервера:", data.message);
@@ -259,12 +267,13 @@ function App() {
               <Link className='bigLink' to="/" >Головна</Link>
               <Link className='bigLink' to="/courses" >Курси</Link>
               <Link className='bigLink' to="/profile" >Профіль</Link>
-              {/* <Link className='bigLink' to="/register" >Реєстрація</Link> */}
+              <button className='btn btnE' onClick={getProtectedData}></button>
               {user ? (
                 <Link className='bigLink logOut' onClick={logout} >Вихід</Link>
               ) : (
                 <Link  className="bigLink logOut"  to="/login" >Вхід</Link>
              )}
+
 
       
             </div>
