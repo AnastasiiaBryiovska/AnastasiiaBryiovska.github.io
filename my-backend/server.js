@@ -37,34 +37,6 @@ const db = admin.firestore();
 
 
 
-app.get("/api/reviews/:courseId", async (req, res) => {
-  const { courseId } = req.params;
-
-  try {
-    const snapshot = await db.collection("response").where("courseId", "==", courseId).get();
-
-    if (snapshot.empty) {
-      console.log("Відгуки не знайдено для courseId:", courseId);
-      return res.status(200).json([]); // повертаємо пустий масив замість 404
-    }
-
-    const reviews = snapshot.docs.map(doc => ({
-      id: doc.id,
-      ...doc.data(),
-      date: doc.data().date?.toDate() || new Date(),
-      dateFormatted: doc.data().date ? 
-        `${doc.data().date.toDate().getDate().toString().padStart(2,'0')}.${(doc.data().date.toDate().getMonth()+1).toString().padStart(2,'0')}.${doc.data().date.toDate().getFullYear()}` 
-        : ""
-    }));
-
-    reviews.sort((a, b) => b.date - a.date);
-    res.json(reviews);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: "Не вдалося отримати відгуки" });
-  }
-});
-
 
 // Маршрут для отримання відгуків по конкретному курсу
 app.get("/api/reviews/:courseId", async (req, res) => {
