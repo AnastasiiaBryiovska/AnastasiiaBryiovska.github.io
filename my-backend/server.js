@@ -6,25 +6,24 @@ const cors = require("cors");
 const admin = require("firebase-admin");
 const app = express();
 
-let users = []; 
+
 
 const corsOptions = {
   origin: [
     'http://localhost:3000',
-    'https://anastasiiabryiovska.github.io', // ваш старий домен
-    'https://dreamy-rugelach-8be11b.netlify.app' // ДОДАЙТЕ ЦЕЙ ДОМЕН NETLIFY
+    'https://anastasiiabryiovska.github.io', 
+    'https://dreamy-rugelach-8be11b.netlify.app' 
   ],
   methods: ['GET','POST','PUT','DELETE','OPTIONS'],
   allowedHeaders: ['Content-Type','Authorization'],
   credentials: true
 };
 
-app.use(cors(corsOptions)); // Обов'язково першим
+app.use(cors(corsOptions)); 
 app.use(express.json()); 
 
 
 
-// Firebase Admin init (SAFE VERSION)
 admin.initializeApp({
   credential: admin.credential.cert({
     projectId: process.env.FIREBASE_PROJECT_ID,
@@ -38,14 +37,13 @@ const db = admin.firestore();
 
 
 
-// Маршрут для отримання відгуків по конкретному курсу
 app.get("/api/reviews/:courseId", async (req, res) => {
   const { courseId } = req.params;
 
   try {
     const snapshot = await db.collection("response").where("courseId", "==", courseId).get();
 
-    // якщо відгуків немає, повертаємо пустий масив замість 404
+  
     if (snapshot.empty) return res.json([]);
 
     const reviews = snapshot.docs.map(doc => {
@@ -101,7 +99,6 @@ app.post("/api/reviews", async (req, res) => {
 });
 
 
-
 const verifyToken = async (req, res, next) => {
   const authHeader = req.headers.authorization;
 
@@ -155,6 +152,54 @@ app.get("/api/users", verifyToken, async (req, res) => {
 });
 
 
+
+app.post("/api/register", async (req, res) => {
+  const { email, password } = req.body;
+
+  try {
+    const user = await admin.auth().createUser({
+      email,
+      password,
+    });
+
+    res.json({
+      message: "User created",
+      uid: user.uid,
+      email: user.email,
+    });
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+});
+
+
+
+const axios = require("axios");
+
+app.post("/api/login", async (req, res) => {
+  const { email, password } = req.body;
+
+  try {
+    const response = await axios.post(
+      `https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${process.env.FIREBASE_API_KEY}`,
+      {
+        email,
+        password,
+        returnSecureToken: true,
+      }
+    );
+
+    res.json({
+      token: response.data.idToken,
+      refreshToken: response.data.refreshToken,
+      email: response.data.email,
+    });
+  } catch (error) {
+    res.status(400).json({
+      error: "Invalid email or password",
+    });
+  }
+});
 
 
 
