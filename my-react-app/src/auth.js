@@ -7,56 +7,52 @@ import { app } from "./firebase";
 const auth = getAuth(app);
 
 export async function signUp() {
-    const emailInput = document.getElementById("email");
-    const passwordInput = document.getElementById("psw");
+  const email = document.getElementById("email").value;
+  const password = document.getElementById("psw").value;
 
-    const email = emailInput.value;
-    const password = passwordInput.value;
+  try {
+    const res = await fetch("https://anastasiiabryiovska-github-io.onrender.com/api/register", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ email, password }),
+    });
 
-    if (!email) {
-        alert("Введіть, будь ласка, email");
-        return;
-    } else if(!password) {
-        alert("Введіть, будь ласка, пароль");
-        return;
-    } else if (password.length < 6) {
-        alert("Пароль повинен містити не менше 6 символів");
-        return;
-    }
+    const data = await res.json();
 
-    
-    try {
-        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-        alert("User created: " + userCredential.user.email);
-    } catch (error) {
-        alert("Таке ім'я користувача вже існує або пароль занадто короткий. Спробуйте інший email або пароль довжиною не менше 6 символів.");
-    }
+    if (!res.ok) throw new Error(data.error);
+
+    alert("User created: " + data.email);
+  } catch (error) {
+    alert(error.message);
+  }
 }
 
 export async function login() {
-    const emailInput = document.getElementById("Lemail");
-    const passwordInput = document.getElementById("Lpsw");
+  const email = document.getElementById("Lemail").value;
+  const password = document.getElementById("Lpsw").value;
 
+  try {
+    const res = await fetch("https://anastasiiabryiovska-github-io.onrender.com/api/login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ email, password }),
+    });
 
-    const email = emailInput.value;
-    const password = passwordInput.value;
+    const data = await res.json();
 
-        if (!email) {
-        alert("Введіть, будь ласка, email");
-        return;
-    } else if(!password) {
-        alert("Введіть, будь ласка, пароль");
-        return;
-    } else if (password.length < 6) {
-        alert("Пароль повинен містити не менше 6 символів");
-        return;
-    }
+    if (!res.ok) throw new Error(data.error);
 
-    try {
-        const userCredential = await signInWithEmailAndPassword(auth, email, password);
-        alert("Logged in: " + userCredential.user.email);
-    } catch (error) {
-        alert("Error logging in. Перевірте правильність введених даних або зареєструйтеся, якщо у вас ще немає облікового запису.");
+    localStorage.setItem("token", data.token);
+
+    window.location.href = "/";
+
+    alert("Logged in: " + data.email);
+  } catch (error) {
+    alert(error.message);
   }
 }
 

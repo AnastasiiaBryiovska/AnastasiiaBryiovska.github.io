@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link} from 'react-router-dom';
-import { auth,  } from "./firebase";
-import { getAuth, onAuthStateChanged} from "firebase/auth";
 import { signUp, login, logout } from "./auth.js";
 import { db } from "./firebase";
 import { collection, getDocs, addDoc} from "firebase/firestore";
@@ -203,40 +201,35 @@ function StudentProgress() {
 
 
 function App() {
-  const [user, setUser] = useState(null);
+  const [isAuth, setIsAuth] = useState(false);
   const [selectedCourses, setSelectedCourses] = useState([]);
 
 
-  async function getProtectedData() {
+async function getProtectedData() {
+  const token = localStorage.getItem("token");
 
-    const user = auth.currentUser;
-
-    if (!user) {
-      alert("Please log in first.");
-      return;
-    }
-
-    try {
-      const token = await user.getIdToken(true);
-
-
-      console.log("ID TOKEN:", token);
-      const response = await fetch("https://anastasiiabryiovska-github-io.onrender.com/api/protected", {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      });
-
-      const data = await response.json();
-      alert(JSON.stringify(data));
-    } catch (error) {
-      alert("Error fetching protected data: " + error.message);
-    }
+  if (!token) {
+    alert("Please log in first.");
+    return;
   }
 
-  useEffect(() => {
-    console.log("USER STATE:", user);
-  }, [user]);
+  try {
+    const response = await fetch("https://anastasiiabryiovska-github-io.onrender.com/api/protected", {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+
+    const data = await response.json();
+    alert(JSON.stringify(data));
+  } catch (error) {
+    alert("Error: " + error.message);
+  }
+}
+
+  // useEffect(() => {
+  //   console.log("USER STATE:", user);
+  // }, [user]);
 
   useEffect(() => {
     fetch("https://anastasiiabryiovska-github-io.onrender.com/api/message")
@@ -247,15 +240,20 @@ function App() {
       .catch(err => console.error("Сервер не відповідає:", err));
   }, []);
 
+  // useEffect(() => {
+
+  //   const logOrOut = onAuthStateChanged(auth, (currentUser) => {
+  //     setUser(currentUser); 
+  //   });
+  //   return () => logOrOut();
+  // }, []);
+
+
+
   useEffect(() => {
-
-    const logOrOut = onAuthStateChanged(auth, (currentUser) => {
-      setUser(currentUser); 
-    });
-    return () => logOrOut();
-  }, []);
-
-
+  const token = localStorage.getItem("token");
+  setIsAuth(!!token);
+}, []);
 
   return (
     <Router>
@@ -268,7 +266,7 @@ function App() {
               <Link className='bigLink' to="/courses" >Курси</Link>
               <Link className='bigLink' to="/profile" >Профіль</Link>
               <button className='btn btnE' onClick={getProtectedData}></button>
-              {user ? (
+              {isAuth ? (
                 <Link className='bigLink logOut' onClick={logout} >Вихід</Link>
               ) : (
                 <Link  className="bigLink logOut"  to="/login" >Вхід</Link>
@@ -283,7 +281,7 @@ function App() {
 
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/courses" element={<Courses user={user} setSelectedCourses={setSelectedCourses} selectedCourses={selectedCourses} />} />
+          <Route path="/courses" element={<Courses user={isAuth} setSelectedCourses={setSelectedCourses} selectedCourses={selectedCourses} />} />
           <Route path="/profile" element={<Profile selectedCourses={selectedCourses} setSelectedCourses={setSelectedCourses} />} />
           <Route path="/profile/schedule" element={<Schedule />} />
           <Route path="/profile/progress" element={<Progress />} />
