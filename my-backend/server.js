@@ -10,7 +10,7 @@ const app = express();
 
 const corsOptions = {
   origin: [
-    'http://localhost:3000',
+    'http://localhost:3000', 
     'https://anastasiiabryiovska.github.io', 
     'https://dreamy-rugelach-8be11b.netlify.app' 
   ],
