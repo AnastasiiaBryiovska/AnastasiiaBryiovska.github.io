@@ -48,6 +48,8 @@ export async function login() {
 
     localStorage.setItem("token", data.token);
 
+    window.location.reload();
+
     window.location.href = "/";
 
     alert("Logged in: " + data.email);
@@ -59,7 +61,8 @@ export async function login() {
 export async function logout() {
   try {
     await signOut(auth);
-    alert("Вихід виконано успішно");
+    localStorage.removeItem("token"); // 🔥 ВАЖЛИВО
+    window.location.href = "/";
   } catch (error) {
     alert("Помилка виходу");
   }

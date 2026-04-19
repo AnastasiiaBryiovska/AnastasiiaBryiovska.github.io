@@ -259,13 +259,13 @@ async function getProtectedData() {
     <Router>
       <div className="App">
         <header className="App-header">
-          <h1 className ="headerr" >Навчальні курси</h1>
           <nav>
             <div className='contain'> 
-              <Link className='bigLink' to="/" >Головна</Link>
+              {/* <h1 className ="headerr" >Навчальні курси</h1> */}
+              <Link className ="headerr" to="/" >Навчальні курси</Link>
               <Link className='bigLink' to="/courses" >Курси</Link>
               <Link className='bigLink' to="/profile" >Профіль</Link>
-              <button className='btn btnE' onClick={getProtectedData}></button>
+              {/* <button className='btn btnE' onClick={getProtectedData}></button> */}
               {isAuth ? (
                 <Link className='bigLink logOut' onClick={logout} >Вихід</Link>
               ) : (
