@@ -61,7 +61,7 @@ export async function login() {
 export async function logout() {
   try {
     await signOut(auth);
-    localStorage.removeItem("token"); // 🔥 ВАЖЛИВО
+    localStorage.removeItem("token");
     window.location.href = "/";
   } catch (error) {
     alert("Помилка виходу");
