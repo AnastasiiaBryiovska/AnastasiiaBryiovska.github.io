@@ -98,24 +98,21 @@ app.post("/api/reviews", async (req, res) => {
   }
 });
 
+const jwt = require("jsonwebtoken");
 
-const verifyToken = async (req, res, next) => {
+const verifyToken = (req, res, next) => {
   const authHeader = req.headers.authorization;
 
-  if (!authHeader || !authHeader.startsWith("Bearer ")) {
-    return res.status(401).json({ message: "Unauthorized" });
-  }
+  if (!authHeader) return res.sendStatus(401);
 
-  const token = authHeader.split("Bearer ")[1];
+  const token = authHeader.split(" ")[1];
 
   try {
-    const decodedToken = await admin.auth().verifyIdToken(token);
-    req.user = decodedToken;
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    req.user = decoded;
     next();
-  } catch (error) {
-    console.log("PROJECT ID:", process.env.FIREBASE_PROJECT_ID);
-    console.log(process.env.FIREBASE_PRIVATE_KEY);
-    return res.status(401).json({ message: "Invalid tokenn" });
+  } catch (err) {
+    return res.sendStatus(403);
   }
 };
 
@@ -157,18 +154,28 @@ app.post("/api/register", async (req, res) => {
   const { email, password } = req.body;
 
   try {
-    const user = await admin.auth().createUser({
+    const snapshot = await db.collection("users")
+      .where("email", "==", email)
+      .get();
+
+    if (!snapshot.empty) {
+      return res.status(400).json({ error: "User already exists" });
+    }
+
+    const userRef = await db.collection("users").add({
       email,
-      password,
+      password, // для лаби ок (НЕ в проді)
+      createdAt: new Date()
     });
 
     res.json({
       message: "User created",
-      uid: user.uid,
-      email: user.email,
+      id: userRef.id,
+      email
     });
+
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    res.status(500).json({ error: error.message });
   }
 });
 
@@ -180,24 +187,31 @@ app.post("/api/login", async (req, res) => {
   const { email, password } = req.body;
 
   try {
-    const response = await axios.post(
-      `https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${process.env.FIREBASE_API_KEY}`,
-      {
-        email,
-        password,
-        returnSecureToken: true,
-      }
+    const snapshot = await db.collection("users")
+      .where("email", "==", email)
+      .where("password", "==", password)
+      .get();
+
+    if (snapshot.empty) {
+      return res.status(400).json({ error: "Invalid credentials" });
+    }
+
+    const user = snapshot.docs[0].data();
+    const uid = snapshot.docs[0].id;
+
+    const token = jwt.sign(
+      { uid, email: user.email },
+      process.env.JWT_SECRET,
+      { expiresIn: "1h" }
     );
 
     res.json({
-      token: response.data.idToken,
-      refreshToken: response.data.refreshToken,
-      email: response.data.email,
+      token,
+      email: user.email
     });
+
   } catch (error) {
-    res.status(400).json({
-      error: "Invalid email or password",
-    });
+    res.status(500).json({ error: error.message });
   }
 });
 
