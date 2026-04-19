@@ -166,7 +166,7 @@ app.post("/api/register", async (req, res) => {
 
     const userRef = await db.collection("users").add({
       email,
-      password, // для лаби ок (НЕ в проді)
+      password, 
       createdAt: new Date()
     });
 
@@ -229,7 +229,7 @@ app.get("/api/profile", verifyToken, (req, res) => {
 
 const PORT = process.env.PORT || 5000;
 
-// Запуск сервера
+
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
