@@ -50,7 +50,7 @@ const sendReview = async (courseId) => {
   if (!reviewText) return;
 
   try {
-    const token = await user.getIdToken(true); // Отримуємо токен для авторизації
+    const token = user; 
 
     const response = await fetch(`${API_URL}/api/reviews`, {
       method: "POST",
@@ -59,8 +59,8 @@ const sendReview = async (courseId) => {
         Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify({
-        courseId: courseId,
-        userId: user.uid,
+        courseId,
+        userId: "web-user", 
         message: reviewText
       }),
     });
@@ -70,6 +70,7 @@ const sendReview = async (courseId) => {
     setReviewText("");
     alert("Відгук збережено!");
     await getReviews(courseId);
+
   } catch (error) {
     console.error("Помилка:", error);
     alert("Помилка при додаванні відгуку");

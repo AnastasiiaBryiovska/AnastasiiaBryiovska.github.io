@@ -204,9 +204,8 @@ function App() {
   const [isAuth, setIsAuth] = useState(false);
   const [selectedCourses, setSelectedCourses] = useState([]);
 
-
-async function getProtectedData() {
-  const token = localStorage.getItem("token");
+  async function getProtectedData() {
+    const token = localStorage.getItem("token");
 
   if (!token) {
     alert("Please log in first.");
@@ -214,7 +213,7 @@ async function getProtectedData() {
   }
 
   try {
-    const response = await fetch("https://anastasiiabryiovska-github-io.onrender.com/api/protected", {
+    const response = await fetch(`https://anastasiiabryiovska-github-io.onrender.com/api/protected`, {
       headers: {
         Authorization: `Bearer ${token}`
       }
@@ -226,6 +225,43 @@ async function getProtectedData() {
     alert("Error: " + error.message);
   }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// async function getProtectedData() {
+//   const token = localStorage.getItem("token");
+
+//   if (!token) {
+//     alert("Please log in first.");
+//     return;
+//   }
+
+//   try {
+//     const response = await fetch("https://anastasiiabryiovska-github-io.onrender.com/api/protected", {
+//       headers: {
+//         Authorization: `Bearer ${token}`
+//       }
+//     });
+
+//     const data = await response.json();
+//     alert(JSON.stringify(data));
+//   } catch (error) {
+//     alert("Error: " + error.message);
+//   }
+// }
 
   // useEffect(() => {
   //   console.log("USER STATE:", user);
@@ -281,7 +317,7 @@ async function getProtectedData() {
 
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/courses" element={<Courses user={isAuth} setSelectedCourses={setSelectedCourses} selectedCourses={selectedCourses} />} />
+          <Route path="/courses" element={<Courses user={localStorage.getItem("token")} setSelectedCourses={setSelectedCourses} selectedCourses={selectedCourses} />} />
           <Route path="/profile" element={<Profile selectedCourses={selectedCourses} setSelectedCourses={setSelectedCourses} />} />
           <Route path="/profile/schedule" element={<Schedule />} />
           <Route path="/profile/progress" element={<Progress />} />
